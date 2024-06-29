@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ExampleResponseDto {
+public class exampleGetResponseDto {
 
-    @JsonProperty("user_id")
+    @JsonProperty("userId")
     private int userId;
 
     @JsonProperty("id")
