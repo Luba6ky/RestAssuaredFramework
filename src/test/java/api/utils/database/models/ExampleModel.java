@@ -3,7 +3,7 @@ package api.utils.database.models;
 import api.utils.database.DBConnection;
 import api.utils.logging.Log;
 import lombok.Data;
-import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.sql.ResultSet;
 import java.util.Arrays;
@@ -35,11 +35,11 @@ public class ExampleModel extends DBConnection {
             Collections.sort(rolesToList);
             Collections.sort(expectedRoles);
 
-            Assert.assertEquals(this.id, userId, "User ID does not match");
-            Assert.assertEquals(this.name, expectedName, "Name does not match");
-            Assert.assertEquals(this.email, expectedEmail, "Email does not match");
-            Assert.assertEquals(this.phone, expectedPhone, "Phone does not match");
-            Assert.assertEquals(rolesToList, expectedRoles, "Roles do not match");
+            Assertions.assertEquals(this.id, userId, "User ID does not match");
+            Assertions.assertEquals(this.name, expectedName, "Name does not match");
+            Assertions.assertEquals(this.email, expectedEmail, "Email does not match");
+            Assertions.assertEquals(this.phone, expectedPhone, "Phone does not match");
+            Assertions.assertEquals(rolesToList, expectedRoles, "Roles do not match");
 
             Log.info("User verified with ID: " + userId);
         }

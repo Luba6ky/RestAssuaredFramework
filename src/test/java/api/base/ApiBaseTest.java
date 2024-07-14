@@ -3,12 +3,12 @@ package api.base;
 import api.utils.logging.Log;
 import api.utils.config.PropertyReader;
 import io.restassured.RestAssured;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ApiBaseTest extends PropertyReader {
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeEach
     public void setup() throws Exception {
         Log.env = "API";
         Log.startLog("RestAssured Tests Started");
@@ -22,7 +22,7 @@ public class ApiBaseTest extends PropertyReader {
         }
     }
 
-    @AfterMethod(alwaysRun = true)
+    @AfterEach
     public void tearDown() {
         Log.endLog("RestAssured Tests Completed");
     }

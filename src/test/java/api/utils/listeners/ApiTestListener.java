@@ -1,21 +1,21 @@
 package api.utils.listeners;
 
-import api.base.ApiBaseTest;
 import api.utils.logging.Log;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 
-public class ApiTestListener extends ApiBaseTest implements ITestListener {
+import java.util.Optional;
+
+public class ApiTestListener implements TestWatcher, BeforeEachCallback {
 
     private static ExtentReports extent;
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
-    @Override
-    public void onStart(ITestContext context) {
+    static {
         extent = new ExtentReports();
         ExtentSparkReporter spark = new ExtentSparkReporter("target/ExtentReports.html");
         extent.attachReporter(spark);
@@ -23,30 +23,29 @@ public class ApiTestListener extends ApiBaseTest implements ITestListener {
     }
 
     @Override
-    public void onFinish(ITestContext context) {
-        extent.flush();
-        Log.endLog("Test Suite ended!");
-    }
-
-    @Override
-    public void onTestStart(ITestResult result) {
-        ExtentTest extentTest = extent.createTest(result.getMethod().getMethodName());
+    public void beforeEach(ExtensionContext context) throws Exception {
+        ExtentTest extentTest = extent.createTest(context.getDisplayName());
         test.set(extentTest);
-        Log.startLog(result.getMethod().getMethodName() + " started!");
+        Log.startLog(context.getDisplayName() + " started!");
     }
 
     @Override
-    public void onTestSuccess(ITestResult result) {
+    public void testSuccessful(ExtensionContext context) {
         test.get().pass("Test passed");
     }
 
     @Override
-    public void onTestFailure(ITestResult result) {
-        test.get().fail(result.getThrowable());
+    public void testFailed(ExtensionContext context, Throwable cause) {
+        test.get().fail(cause);
     }
 
     @Override
-    public void onTestSkipped(ITestResult result) {
-        test.get().skip(result.getThrowable());
+    public void testAborted(ExtensionContext context, Throwable cause) {
+        test.get().skip(cause);
+    }
+
+    @Override
+    public void testDisabled(ExtensionContext context, Optional<String> reason) {
+        test.get().skip(reason.orElse("No reason provided"));
     }
 }

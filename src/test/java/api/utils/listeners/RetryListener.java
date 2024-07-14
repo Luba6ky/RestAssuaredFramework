@@ -1,29 +1,46 @@
 package api.utils.listeners;
 
-import org.testng.IAnnotationTransformer;
-import org.testng.IRetryAnalyzer;
-import org.testng.ITestResult;
-import org.testng.annotations.ITestAnnotation;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
+import org.junit.jupiter.api.extension.TestWatcher;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.util.Optional;
 
-public class RetryListener implements IAnnotationTransformer, IRetryAnalyzer {
+public class RetryListener implements TestExecutionExceptionHandler, TestWatcher {
 
     private int count = 0;
     private static final int maxTry = 3;
 
     @Override
-    public boolean retry(ITestResult result) {
+    public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
         if (count < maxTry) {
             count++;
-            return true;
+            System.out.println("Retrying test " + context.getDisplayName() + " for the " + count + " time.");
+            throw throwable;
+        } else {
+            throw throwable;
         }
-        return false;
     }
 
     @Override
-    public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
-        annotation.setRetryAnalyzer(RetryListener.class);
+    public void testSuccessful(ExtensionContext context) {
+        count = 0;
+    }
+
+    @Override
+    public void testFailed(ExtensionContext context, Throwable cause) {
+        if (count >= maxTry) {
+            count = 0;
+        }
+    }
+
+    @Override
+    public void testAborted(ExtensionContext context, Throwable cause) {
+        count = 0;
+    }
+
+    @Override
+    public void testDisabled(ExtensionContext context, Optional<String> reason) {
+        count = 0;
     }
 }
