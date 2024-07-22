@@ -15,7 +15,7 @@ public class PropertyReader {
             properties = new Properties();
             InputStream configFile = null;
             try {
-                //System.setProperty("profile","zetta");
+                System.setProperty("profile","zetta");
                 String env = System.getProperty("profile");
                 String configFilePath = "apiConfig/config/" + env + ".properties";
                 System.out.println("Attempting to load properties file: " + configFilePath); // Логиране на пътя до конфигурационния файл
